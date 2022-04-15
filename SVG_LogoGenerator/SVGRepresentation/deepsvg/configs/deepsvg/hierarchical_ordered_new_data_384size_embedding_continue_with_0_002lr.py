@@ -1,0 +1,52 @@
+from .default_icons import *
+import os
+
+class ModelConfig(Hierarchical):
+    def __init__(self):
+        super().__init__()
+
+        self.label_condition = False
+        self.use_vae = False
+
+        self.num_groups_proposal = self.max_num_groups = 16
+        self.max_seq_len = 62
+        self.max_total_len = 128
+
+        self.dim_z = 384
+
+class Config(Config):
+    def __init__(self, num_gpus=1):
+        super().__init__(num_gpus=num_gpus)
+
+        datafolder = "../../../SVG_Data/"   # Make sure to set this to where your SVG_Data folder is located
+
+        self.model_cfg = ModelConfig()
+        self.model_args = self.model_cfg.get_model_args()
+
+        self.dataloader_module = "deepsvg.svgtensor_dataset"
+        self.data_dir = os.path.join(datafolder, "data_for_training_deepsvg_model/icons_tensor/")
+        self.meta_filepath = os.path.join(datafolder,  "data_for_training_deepsvg_model/icons_meta.csv")
+
+        self.filter_category = None
+        
+        self.pretrained_path = "../training/training_logs/2022-02-27_16g-62seq-128c-384z-deepsvg-icons/models/deepsvg/hierarchical_ordered_new_data_384size_embedding/best.pth.tar"
+
+        self.learning_rate = 0.002 * num_gpus
+        self.batch_size = 64 * num_gpus
+
+        self.num_groups_proposal = self.max_num_groups = 16
+        self.max_seq_len = 62
+        self.max_total_len = 128
+
+        # Dataloader
+        self.loader_num_workers = 4 * num_gpus
+
+        # Training
+        self.num_epochs = 50
+        
+        self.val_every = 100
+        self.ckpt_every = 1000
+
+
+
+
